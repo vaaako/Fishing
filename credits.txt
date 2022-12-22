@@ -9,3 +9,8 @@ This [video/theatre piece/...] uses these sounds from freesound:
 "lake waves" by Owl ( https://freesound.org/s/156525/ ) licensed under CC BY 4.0
 "lake waves" by Benboncan ( https://freesound.org/s/67884/ ) licensed under CC BY 4.0
 "flapping fish" by ramattahatta ( https://freesound.org/s/649003/ ) licensed under CC0 1.0
+
+
+Image font by Love2D Wiki ( https://love2d.org/wiki/File:Resource-Imagefont.png )
+"Tucunaré" from ( https://guiaanimal.net/articles/234 )
+"Pirarucu" and "Tambaqui" from ( https://www.istockphoto.com/ )

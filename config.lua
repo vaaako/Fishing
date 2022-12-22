@@ -1,8 +1,8 @@
 -- Libraries --
-local wf = require 'libraries/windfield'
-world = wf.newWorld(0, 0)
-vector = require "libraries/hump/vector"
-require "libraries/slam" -- Better to play sounds
+local wf = require 'libraries/windfield' -- Collision --
+world = wf.newWorld(0, 0) -- Create world --
+vector = require 'libraries/hump/vector' -- Vector --
+Talkies = require 'libraries/talkies' -- Dialogue --
 
 
 
@@ -16,6 +16,7 @@ RES_H = 640
 -- HEIGHT = love.graphics.getHeight() - (768 - HEIGHT)
 
 AIM_SPEED = 250
+AIM_SIZE = 20
 
 BAR_X = 10
 BAR_Y = HEIGHT - 70 -- All positions need to be relative to width and height
