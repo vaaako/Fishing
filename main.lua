@@ -1,7 +1,16 @@
 --[[ 
 
-started on: 19/12/2022 (3 days)
+started on: 20/12/2022 (5 days)
 by: vako
+
+Dev log:
+22/12/2022
+	- I have done more then a thought I would in only 3 days. I will work on effects, polishment when the game is "done"
+	- I'm tired to work on this today, I'm fulled, I don't know how to write in english anymore, sorryyyyyy
+
+23/12/2022
+	- I'm fine today, I sleep well, yesterday I had a bad sleep time, that's why I was so tired, but I'm fine now
+	- I don't know what I will code today, probally the rod, button and arrows animations, I hate to have code that stuffs :(
 
 ]]
 
@@ -9,14 +18,13 @@ function love.load()
 	require 'config'
 	require 'src/sound'
 	require 'src/image'
-	require 'src/collision'
 	require 'src/fishes'
 	require 'src/game'
 
 	-- Window Config --
 	love.window.setTitle( "Pescaria doida" )
 	love.window.setMode( WIDTH, HEIGHT,
-						{ fullscreen=false, resizable=false, vsync=1, minwidth=600, minheight=472, centered=true } )
+						{ fullscreen=false, resizable=true, vsync=1, minwidth=600, minheight=472, centered=true } )
 	love.graphics.setDefaultFilter("nearest", "nearest") -- Anti alising
 	love.graphics.setBackgroundColor(0, 0.5, 0.7) -- Clear Screen
 
@@ -34,8 +42,6 @@ end
 
 function love.update(dt)
 	game:update(dt)
-	world:update(dt)
-
 	Talkies.update(dt) -- Dialogue --
 end
 
@@ -58,15 +64,14 @@ function love.draw()
 
 
 	game:draw()
-	-- world:draw() -- Show Colission
 	Talkies.draw() -- Dialogue --
 	love.graphics.setFont(fontimage) --- This way Taliker.font will not overwrite other texts 
 
 
 	love.graphics.setColor(1, 1, 1)
 	love.graphics.print("FPS: "..tostring(love.timer.getFPS( )), 10, 10)
-	love.graphics.print("AX:  "..tostring(aim:getX()), 10, 25)
-	love.graphics.print("AY:  "..tostring(aim:getY()), 10, 40)
+	love.graphics.print("AX:  "..tostring(aim.x), 10, 25)
+	love.graphics.print("AY:  "..tostring(aim.y), 10, 40)
 	love.graphics.print('mx: '..mx .. ' my: '.. my, 10, 55)
 
 	-- love.graphics.print("FORÇA:  "..tostring(game.str), WIDTH/2, 55, 0, 2, 2)
@@ -84,7 +89,7 @@ end
 
 function love.resize(w, h)
 	WIDTH = w
-	HEIGHT = h-260
+	HEIGHT = h
 end
 
 -- 550, 400
@@ -107,11 +112,10 @@ function love.keypressed(key)
 
 	if key == 'return' then
 		if game.state == 0 then -- Prepare to fishing minigame --
-			if not world:queryCircleArea(target.x+target.size/2, target.y+target.size/2, target.size, {'Aim'})[1] then -- Creates a circle and check if is colliding with Aim
+			if not circleCollision(target.x+TARGET_SIZE/2, target.y+TARGET_SIZE/2, TARGET_SIZE, aim.x, aim.y, AIM_SIZE) then -- Check collision with aim
 				print('not colliding')
 				return
 			end
-
 			game.state = 1
 
 		elseif game.state == 0.5 then -- Showing dialogue --
@@ -120,11 +124,11 @@ function love.keypressed(key)
 		elseif game.state == 1 then -- Start fishing --
 			game.str = bar.fill
 			game.state = 2 -- Change to wait fish
-
-			game.var = 1
-			-- game.var = randomInRange(5, 15) -- How many time wait fish
+			-- game.var = 1
+			game.var = randomInRange(5, 15) -- How many time wait fish
 			game.time_prev = love.timer.getTime() -- Start timer
 
+			rod_pull:stop()
 			rod_throw:play() -- Throw Rod Sound --
 			-- instance:setPitch(1.25) -- Speed up
 
@@ -140,49 +144,6 @@ function love.keypressed(key)
 			else
 				game:showDialogue()
 			end
-		end
-
-	-- Catch fish --
-	elseif game.state == 3 then
-		local elapsed = love.timer.getTime() - game.time_prev -- Count time passed
-		-- print(elapsed)
-		
-		-- Time limit --
-		if elapsed >= 5 then
-			game:resetValues()
-			game.fished = { name = "LOST!" } -- Change later
-			game:showDialogue("Que droga, talvez na próxima")
-			return
-		end
-
-
-		-- Alternate between keys --
-		if game.kz > game.kx then -- If Z is higher then X, only accept X input
-			if key == 'x' then
-				game.kx = game.kx + 1
-				target.x = target.x - 5
-			end
-		else -- If X is higher then Z or both is equal
-			if key == 'z' then
-				game.kz = game.kz + 1
-				target.y = target.y + 5
-
-			end
-		end
-
-
-		-- Catch fish --
-		if game.kz + game.kx == game.var then
-
-			if randomInRange(0, 100) <= 40 or game.str <= 200 then
-				game.fished = fishes['trash'][1]
-			else
-				game.fished = fishes['fishes'][randomInRange(1, #fishes['fishes'])] -- 1-7 (Number of fishes)
-			end
-
-			game.state = 4 -- Show fish
-			game.fished['amount'] = game.fished['amount'] + 1
-			love.audio.play(rod_pull) -- Pull rod
 		end
 	end
 

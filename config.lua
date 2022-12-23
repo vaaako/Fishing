@@ -1,9 +1,6 @@
 -- Libraries --
-local wf = require 'libraries/windfield' -- Collision --
-world = wf.newWorld(0, 0) -- Create world --
-vector = require 'libraries/hump/vector' -- Vector --
 Talkies = require 'libraries/talkies' -- Dialogue --
-
+require 'libraries/slam' -- Better to play sounds
 
 
 WIDTH = 800
@@ -15,19 +12,33 @@ RES_H = 640
 -- WIDTH  = love.graphics.getWidth() - (1366 - WIDTH)  -- Window to fit on different screen sizes
 -- HEIGHT = love.graphics.getHeight() - (768 - HEIGHT)
 
-AIM_SPEED = 250
+AIM_SPEED = 15
 AIM_SIZE = 20
+AIM_STR = 3
 
 BAR_X = 10
 BAR_Y = HEIGHT - 70 -- All positions need to be relative to width and height
 BAR_WIDTH = 300
 BAR_HEIGHT = 20
 
-
+TARGET_SIZE = 30
+TARGET_AREA_X =  { 50, WIDTH-50 }
+TARGET_AREA_Y =  { 320, 410 }
+TARGET_STR = 0.05
 
 
 -- Functions --
 function randomInRange(x, y)
 	math.randomseed(os.time())
+
+	if type(x) == 'table' and not y then
+		x, y = x[1], x[2]
+	end
 	return math.random(x, y)
+end
+
+
+function circleCollision(x1, y1, r1, x2, y2, r2)
+	local d = math.sqrt((x2 - x1) ^ 2 + (y2 - y1) ^ 2)
+	return d - (r1 + r2) < 0
 end

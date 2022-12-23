@@ -207,6 +207,15 @@ fishes = {
 			}
 		},
 
+
+		{
+			text = {
+				"Eu acho que minha esquizofrênia está piorando.",
+				"Não concorda?"
+			}
+			-- make event --
+		},
+
 		{
 			text = {
 				"Será que Deus poderia ter me ajudado com meu pai? -- Não acho. -- Deus não existe.",
@@ -240,8 +249,14 @@ fishes = {
 
 		{
 			text = {
-				"\"A vida é um pendulo que oscila entre a ansiedade de querer e o tédio de possuir\"",
-				"Eu não "
+				"\"A vida é um pendulo que oscila entre a ansiedade de querer e o tédio de possuir.\""
+			}
+		},
+		{
+
+			text = {
+				"Por que as pessoas acreditam em Deus? Pra ir pro céu? Isso não seria uma realação de interesse? Só acredita em Deus pra poder ir pro céu?",
+				"Isso não faz de Deus um pouco... Egoista? Só pode ir pro céu quem acredita nele. Eu não quero seguir um deus egoísta.",
 			}
 		}
 

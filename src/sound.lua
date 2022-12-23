@@ -1,5 +1,3 @@
-require 'libraries/slam' -- Better to play sounds
-
 local ambient_path = 'resources/sounds/ambient/'
 local sfx_path = 'resources/sounds/sfx/'
 
@@ -40,7 +38,7 @@ Talkies.optionOnSelectSound:addTags('dialogue')
 Talkies.optionSwitchSound:addTags('dialogue')
 
 -- Set Volume --
--- love.audio.tags.dialogue.setVolume(0.2)
-love.audio.tags.dialogue.setVolume(0)
-love.audio.tags.background.setVolume(0) -- mute all background sounds
-love.audio.tags.sfx.setVolume(0) -- mute all background sounds
+love.audio.tags.dialogue.setVolume(0.2)
+-- love.audio.tags.dialogue.setVolume(0)
+-- love.audio.tags.background.setVolume(0) -- mute all background sounds
+-- love.audio.tags.sfx.setVolume(0) -- mute all background sounds
