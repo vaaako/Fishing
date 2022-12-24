@@ -1,6 +1,6 @@
 --[[ 
 
-started on: 19/12/2022 (4 days)
+started on: 19/12/2022 (5 days)
 by: vako
 
 Dev log:
@@ -11,6 +11,13 @@ Dev log:
 23/12/2022
 	- I'm fine today, I sleep well, yesterday I had a bad sleep time, that's why I was so tired, but I'm fine now
 	- I don't know what I will code today, probally the rod, button and arrows animations, I hate to have code that stuffs :(
+
+23/12/2022
+	- Merry Christmas. I didn't code what I said I would, but I did code other things and I think they were nice additions
+	- One thing I've learned in game dev is: You're never going to program all the code 100% efficiently, there were things
+		I did because I was really tired and they work, it's not programmed the right way, but it works and I need to focus on more important things
+		so those things that are not programmed in the right way can wait or if they are not so serious they can leave it like that
+		I just can't become yandere dev
 
 ]]
 
