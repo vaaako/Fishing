@@ -1,65 +1,47 @@
 game = {}
-game.str, game.state = 0, 0
+game.str = 0
 game.button, game.key = 0, 1 -- Button times and Keyboard key times
-game.time_prev, game.var = 0, 0
+PREV_TIME, game.var = 0, 0
 
 game.fished = "Nothing"
--- game.fished = fishes['fishes'][2]
--- game.state = 4
-
-game.dialogue = 0 -- Index of current dialogue
-
 game.inventory = false
-game.fishes_on_inventory = {}
+game.showedNotes = {}
 
---[[
-
-0    - Idle
-0.5  - Dialogue
-0.75 - Inventory
-1    - Strength test
-2    - Wait fish
-3    - Buttons press
-3.5  - Arrow
-4    - See fish
-
-]]
+-- DEBUG
+-- game.fished = lake['fishes'][2]
+-- GAME_STATE = 4
+-- DIALOGUE_INDEX = 17 -- Index of current dialogue
 
 -- Aim --
 aim = {}
 aim.x = love.graphics.getWidth() / 2
 aim.y = love.graphics.getHeight() / 2
 
-
+-- Target --
 target = {}
 target.x, target.y = randomInRange(TARGET_AREA_X), randomInRange(TARGET_AREA_Y)
 
-bar = {}
-bar.fill = 0
-bar.back = false
-
-
-function game:showDialogue(text, title, speed)
-	title = title or "Zé Thomas"
-	speed = speed or "medium"
+function game:showDialogue(text, fish) --speed, title, sound, color)
+	fish = fish or {}
 
 	if not text  then -- Go to next index and show default dialogue
-		game.dialogue = game.dialogue + 1
-		text =  fishes['dialogue'][game.dialogue]['text']
+		DIALOGUE_INDEX = DIALOGUE_INDEX + 1
+		fish = lake['dialogue'][DIALOGUE_INDEX]
 	end
 
-	Talkies.say(title,
-		text,
+	Talkies.say(fish.title or "Luna", text or fish.text,
 		{
-			textSpeed = speed,
-			titleColor = { 0.5, 1, 0.5 },
-			
+			textSpeed = fish.speed or 'medium',
+			titleColor = fish.color or { 0.5, 1, 0.5 },
+			options = fish.options,
+			talkSound=fish.talkSound,
+
 			onstart = function()
-				game.state = 0.5 -- Dialogue mode --
+				GAME_STATE = 0.5 -- Dialogue mode --
 			end,
 
 			oncomplete = function()
-				game.state = 0 -- Back to idle --
+				GAME_STATE = 0 -- Back to idle --
 			end
 		}
 	)
@@ -67,13 +49,15 @@ end
 
 
 function game:resetValues()
-	game.state, bar.fill, game.str, game.button, game.key = 0, 0, 0, 0, 1
+	GAME_STATE, bar.fill, game.str, game.button, game.key = 0, 0, 0, 0, 1
 	bar.back = false
 	target.x, target.y = randomInRange(TARGET_AREA_X), randomInRange(TARGET_AREA_Y)
 end
 
-function game:fishing() -- When game.state needs drawing
-	if game.state == 4 then -- Show Fish --
+
+-- When GAME_STATE needs drawing --
+function game:fishing()
+	if GAME_STATE == 4 then -- Show Fish --
 		local fish = game.fished
 
 		local w, h = fish.img:getWidth(), fish.img:getHeight()
@@ -86,12 +70,11 @@ function game:fishing() -- When game.state needs drawing
 	end
 end
 
-
-
+-- Game Logic --
 function game:update(dt)
 	local speed = AIM_SPEED * dt
 
-	if game.state == 0 then -- Just move if is in move mode
+	if GAME_STATE == 0 then -- Just move if is in move mode
 		if (aim.x <= AIM_SIZE or aim.x >= WIDTH-AIM_SIZE) or (aim.y <= AIM_SIZE or aim.y >= HEIGHT+AIM_SIZE) then -- Screen limit
 			return
 		end
@@ -109,32 +92,32 @@ function game:update(dt)
 		end
 
 	-- Strength Test --
-	elseif game.state == 1 then
+	elseif GAME_STATE == 1 then
 		-- Fill bar --
 		if bar.back then -- Bar is going back
-			bar.fill = bar.fill - 10
-			if bar.fill == 0 then bar.back = false end -- Change direction
+			bar.fill = bar.fill - BAR_SPEED --* dt
+			if bar.fill <= 0 then bar.back = false end -- Change direction
 		else
-			bar.fill = bar.fill + 10
-			if bar.fill == BAR_WIDTH then bar.back = true end
+			bar.fill = bar.fill + BAR_SPEED --* dt
+			if bar.fill >= BAR_WIDTH then bar.back = true end
 		end
 
 	-- Waiting fish --
-	elseif game.state == 2 then
-		local elapsed = love.timer.getTime() - game.time_prev
+	elseif GAME_STATE == 2 then
+		local elapsed = love.timer.getTime() - PREV_TIME
 
 		if elapsed >= game.var then -- Time to wait fish has passed
-			game.time_prev = love.timer.getTime() -- Restart timer
+			PREV_TIME = love.timer.getTime() -- Restart timer
 			game.var = randomInRange(5, 15) -- How many times press button until arrows
-			game.state = 3
+			GAME_STATE = 3
 			flapping_fish:play() -- Get fish sound
 		end
 
 
 	-- Catch fish --
-	elseif math.floor(game.state) == 3 then -- 3 or 3.5
-		local elapsed = love.timer.getTime() - game.time_prev -- Count time passed
-		print(elapsed)
+	elseif math.floor(GAME_STATE) == 3 then -- 3 or 3.5
+		local elapsed = love.timer.getTime() - PREV_TIME -- Count time passed
+		-- print(elapsed)
 		
 		-- Time limit (To update)--
 		if elapsed >= 20 or target.y < 300 then -- Time out
@@ -145,7 +128,7 @@ function game:update(dt)
 		end
 
 		-- Z and X and Arrows --
-		if game.state == 3 then
+		if GAME_STATE == 3 then
 			game.fished = { name = "BUTTONS" } -- DEBUG --
 
 			-- Alternate between keys --
@@ -159,7 +142,7 @@ function game:update(dt)
 				game.button = game.button + 1
 			end
 
-		elseif game.state == 3.5 then
+		elseif GAME_STATE == 3.5 then
 			game.fished = { name = "ARROW / KEY: "..game.key } -- DEBUG --
 
 			if love.keyboard.isDown('up') and game.key == 1 then
@@ -184,11 +167,11 @@ function game:update(dt)
 
 		-- Alternate between mini-games --
 		if game.button == game.var then
-			if game.state == 3 then -- Randomizer changes depending of game mode
-				game.state = 3.5
+			if GAME_STATE == 3 then -- Randomizer changes depending of game mode
+				GAME_STATE = 3.5
 				game.var = randomInRange(5, 12)
 			else
-				game.state = 3
+				GAME_STATE = 3
 				game.var = randomInRange(20, 50)
 			end
 			game.button = 0
@@ -197,37 +180,26 @@ function game:update(dt)
 
 		-- Catch fish --
 		if target.y >= 500 then -- Reach bridge (I forgot the correct name) --
-			-- 40% to catch trash or if str is less then 200
-			game.fished = (randomInRange(0, 100) <= 40 or (game.str <= 200)) and fishes['trash'][randomInRange(1, #fishes['trash'])] or fishes['fishes'][randomInRange(1, #fishes['fishes'])]
-			game.state = 4 -- Show fish
-			game.fished['amount'] = game.fished['amount'] + 1
 			rod_pull:play() -- Pull rod
+
+			-- 40% to catch trash or if str is less then 200
+			game.fished = (randomInRange(0, 100) <= 40 or (game.str <= 200)) and lake['trash'][randomInRange(1, #lake['trash'])] or lake['fishes'][randomInRange(1, #lake['fishes'])]
+			GAME_STATE = 4 -- Show fish
+			game.fished['amount'] = game.fished['amount'] + 1
 		end
 	end
 end
 
 
-function game:draw()
-	love.graphics.draw(image.background, 0, 0, 0, RES_W/image.background:getWidth(), RES_H/image.background:getHeight())
+--[[
 
-	love.graphics.draw(image.rod, 100, 100, 0, 300/image.rod:getWidth(), 400/image.rod:getWidth())
+0    - Idle
+0.5  - Dialogue
+0.75 - Inventory (No movement)
+1    - Strength test
+2    - Wait fish
+3    - Buttons press
+3.5  - Arrow
+4    - See fish
 
-	-- Draw aim
-	-- love.graphics.setColor(1, 1, 1)
-	-- love.graphics.rectangle('fill', aim.x, aim.y, 10, 10)
-	love.graphics.draw(image.aim, aim.x-AIM_SIZE, aim.y-AIM_SIZE, 0, AIM_SIZE/image.aim:getWidth(), AIM_SIZE/image.aim:getHeight())
-
-	-- Bar
-	love.graphics.setColor(0, 0, 1)
-	love.graphics.rectangle('fill', BAR_X, BAR_Y, bar.fill, BAR_HEIGHT)
-
-	-- Bar outline
-	love.graphics.setColor(1, 1, 1)
-	love.graphics.rectangle('line', BAR_X, BAR_Y, BAR_WIDTH, BAR_HEIGHT)
-
-	love.graphics.setColor(1, 1, 1)
-	love.graphics.rectangle('line', target.x, target.y, TARGET_SIZE, TARGET_SIZE)
-	love.graphics.circle('line', target.x+TARGET_SIZE/2, target.y+TARGET_SIZE/2, TARGET_SIZE)
-
-	game:fishing()
-end
+]]

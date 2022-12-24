@@ -14,10 +14,10 @@ rod_pull = love.audio.newSource(sfx_path..'rod_pull.wav', 'static')
 
 -- Dialogue --
 -- Audio from bfxr (https://www.bfxr.net/)
-Talkies.talkSound = love.audio.newSource("resources/sounds/sfx/dialogue/typeSound.wav", "static")
-Talkies.optionOnSelectSound = love.audio.newSource("resources/sounds/sfx/dialogue/optionSelect.wav", "static")
-Talkies.optionSwitchSound = love.audio.newSource("resources/sounds/sfx/dialogue/optionSwitch.wav", "static")
-
+Talkies.talkSound = love.audio.newSource(sfx_path.."dialogue/typeSound.wav", "static")
+Talkies.optionOnSelectSound = love.audio.newSource(sfx_path.."dialogue/optionSelect.wav", "static")
+Talkies.optionSwitchSound = love.audio.newSource(sfx_path.."dialogue/optionSwitch.wav", "static")
+blop = love.audio.newSource(sfx_path.."dialogue/talk.wav", "static")
 
 -- baseline:addTags('background', 'music') -- a source can have multiple tags
 
